@@ -13,13 +13,33 @@ class Auth {
         this.logoutBtn = document.getElementById('logout-btn');
         this.usernameSpan = document.getElementById('username');
         this.app = document.getElementById('app');
+        this.landingPage = document.getElementById('landing-page');
+
+        // Learn More button (only on index.html)
+        const learnMoreBtn = document.getElementById('learn-more');
+        if (learnMoreBtn) {
+            learnMoreBtn.addEventListener('click', () => {
+                const featuresSection = document.querySelector('.features-section');
+                featuresSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
 
         // Event Listeners
-        this.loginForm.addEventListener('submit', (e) => this.login(e));
-        this.registerForm.addEventListener('submit', (e) => this.register(e));
-        this.showRegisterBtn.addEventListener('click', () => this.toggleForms());
-        this.showLoginBtn.addEventListener('click', () => this.toggleForms());
-        this.logoutBtn.addEventListener('click', () => this.logout());
+        if (this.loginForm) {
+            this.loginForm.addEventListener('submit', (e) => this.login(e));
+        }
+        if (this.registerForm) {
+            this.registerForm.addEventListener('submit', (e) => this.register(e));
+        }
+        if (this.showRegisterBtn) {
+            this.showRegisterBtn.addEventListener('click', () => this.toggleForms());
+        }
+        if (this.showLoginBtn) {
+            this.showLoginBtn.addEventListener('click', () => this.toggleForms());
+        }
+        if (this.logoutBtn) {
+            this.logoutBtn.addEventListener('click', () => this.logout());
+        }
 
         // Check authentication status
         this.checkAuth();
@@ -33,13 +53,34 @@ class Auth {
 
     // Check if user is authenticated
     checkAuth() {
+        const isIndexPage = !window.location.pathname.includes('auth.html');
+        
         if (this.token && this.user) {
-            this.authContainer.classList.add('hidden');
-            this.app.classList.remove('hidden');
-            this.usernameSpan.textContent = this.user.username;
+            // If on auth page, redirect to app
+            if (!isIndexPage) {
+                window.location.href = 'index.html';
+                return;
+            }
+            // If on index page and app exists, show app and hide landing
+            if (this.app && this.landingPage) {
+                this.app.classList.remove('hidden');
+                this.landingPage.classList.add('hidden');
+                if (this.usernameSpan) {
+                    this.usernameSpan.textContent = this.user.username;
+                }
+            }
         } else {
-            this.authContainer.classList.remove('hidden');
-            this.app.classList.add('hidden');
+            // If on index page
+            if (isIndexPage) {
+                // Show landing page if it exists
+                if (this.landingPage) {
+                    this.landingPage.classList.remove('hidden');
+                }
+                // Hide app if it exists
+                if (this.app) {
+                    this.app.classList.add('hidden');
+                }
+            }
         }
     }
 
@@ -120,7 +161,7 @@ class Auth {
         localStorage.removeItem('user');
         this.token = null;
         this.user = null;
-        this.checkAuth();
+        window.location.href = 'index.html';
     }
 
     // Set authentication data
@@ -134,6 +175,12 @@ class Auth {
     // Get authentication token
     getToken() {
         return this.token;
+    }
+
+    // Function to show auth forms
+    showAuthForms() {
+        this.authContainer.classList.remove('hidden');
+        this.app.classList.add('hidden');
     }
 }
 

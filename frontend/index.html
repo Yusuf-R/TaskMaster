@@ -10,42 +10,55 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Auth Forms -->
-        <div id="auth-container" class="auth-container">
-            <div class="auth-box">
-                <div class="auth-header">
-                    <h2>TaskMaster</h2>
-                    <p>Manage your tasks efficiently</p>
+        <!-- Landing Page -->
+        <div id="landing-page" class="landing-page">
+            <nav class="landing-nav">
+                <div class="logo">
+                    <h1>⚡ TaskMaster</h1>
                 </div>
-                
-                <!-- Login Form -->
-                <form id="login-form" class="auth-form">
-                    <h3>Login</h3>
-                    <div class="form-group">
-                        <input type="email" id="login-email" placeholder="Email" required>
+                <div class="nav-buttons">
+                    <a href="auth.html" class="btn btn-primary">Get Started</a>
+                </div>
+            </nav>
+            
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1>Manage Your Tasks with Ease</h1>
+                    <p>Stay organized, meet deadlines, and achieve more with TaskMaster's intuitive task management system.</p>
+                    <div class="hero-buttons">
+                        <a href="auth.html" class="btn btn-primary">Get Started</a>
+                        <button id="learn-more" class="btn btn-outline">Learn More</button>
                     </div>
-                    <div class="form-group">
-                        <input type="password" id="login-password" placeholder="Password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <p class="form-switch">Don't have an account? <a href="#" id="show-register">Register</a></p>
-                </form>
+                </div>
+                <div class="hero-image">
+                    <img src="src/components/task.svg" alt="Task Management Illustration">
+                </div>
+            </div>
 
-                <!-- Register Form -->
-                <form id="register-form" class="auth-form hidden">
-                    <h3>Register</h3>
-                    <div class="form-group">
-                        <input type="text" id="register-username" placeholder="Username" required>
+            <div class="features-section">
+                <h2>Why Choose TaskMaster?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-tasks"></i>
+                        <h3>Easy Task Management</h3>
+                        <p>Create, organize, and track your tasks effortlessly</p>
                     </div>
-                    <div class="form-group">
-                        <input type="email" id="register-email" placeholder="Email" required>
+                    <div class="feature-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Deadline Tracking</h3>
+                        <p>Never miss a deadline with our reminder system</p>
                     </div>
-                    <div class="form-group">
-                        <input type="password" id="register-password" placeholder="Password" required>
+                    <div class="feature-card">
+                        <i class="fas fa-filter"></i>
+                        <h3>Smart Filtering</h3>
+                        <p>Find tasks quickly with powerful search and filters</p>
                     </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    <p class="form-switch">Already have an account? <a href="#" id="show-login">Login</a></p>
-                </form>
+                    <div class="feature-card">
+                        <i class="fas fa-mobile-alt"></i>
+                        <h3>Mobile Friendly</h3>
+                        <p>Access your tasks anywhere, anytime</p>
+                    </div>
+                </div>
             </div>
         </div>
 
