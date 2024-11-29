@@ -38,12 +38,17 @@
                             <i class="fas fa-envelope"></i>
                             <input type="email" id="login-email" placeholder="Email" required>
                         </div>
+                        <small class="error-message" id="login-email-error"></small>
                     </div>
                     <div class="form-group">
                         <div class="input-icon">
                             <i class="fas fa-lock"></i>
                             <input type="password" id="login-password" placeholder="Password" required>
+                            <button type="button" class="password-toggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
+                        <small class="error-message" id="login-password-error"></small>
                     </div>
                     <button type="submit" class="btn btn-primary">Login</button>
                     <p class="form-switch">Don't have an account? <a href="#" id="show-register">Register</a></p>
@@ -57,18 +62,44 @@
                             <i class="fas fa-user"></i>
                             <input type="text" id="register-username" placeholder="Username" required>
                         </div>
+                        <small class="error-message" id="register-username-error"></small>
                     </div>
                     <div class="form-group">
                         <div class="input-icon">
                             <i class="fas fa-envelope"></i>
                             <input type="email" id="register-email" placeholder="Email" required>
                         </div>
+                        <small class="error-message" id="register-email-error"></small>
                     </div>
                     <div class="form-group">
                         <div class="input-icon">
                             <i class="fas fa-lock"></i>
                             <input type="password" id="register-password" placeholder="Password" required>
+                            <button type="button" class="password-toggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
                         </div>
+                        <small class="error-message" id="register-password-error"></small>
+                        <small class="password-requirements">
+                            Password must contain at least:
+                            <ul>
+                                <li id="length-check">4 characters</li>
+                                <li id="uppercase-check">1 uppercase letter</li>
+                                <li id="lowercase-check">1 lowercase letter</li>
+                                <li id="number-check">1 number</li>
+                                <li id="special-check">1 special character</li>
+                            </ul>
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="register-password-confirm" placeholder="Confirm Password" required>
+                            <button type="button" class="password-toggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small class="error-message" id="register-password-confirm-error"></small>
                     </div>
                     <button type="submit" class="btn btn-primary">Register</button>
                     <p class="form-switch">Already have an account? <a href="#" id="show-login">Login</a></p>
