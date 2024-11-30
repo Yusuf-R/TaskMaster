@@ -14,7 +14,7 @@ class TaskManager {
         this.tasksList = document.querySelector('#tasks-list');
         this.taskModal = document.getElementById('task-modal');
         this.taskForm = document.getElementById('task-form');
-        this.addTaskBtn = document.getElementById('add-task-btn');
+        this.addTaskBtn = document.getElementById('addTaskBtn');
         this.closeModalBtn = document.getElementById('close-modal');
         this.modalTitle = document.getElementById('modal-title');
         this.searchInput = document.getElementById('searchInput');
@@ -29,314 +29,88 @@ class TaskManager {
         }
 
         this.initializeEventListeners();
+        this.loadTasks(); // Load tasks immediately
         
         // Store instance in window object
         window.taskManager = this;
     }
 
+    showModal() {
+        if (this.taskModal) {
+            this.taskModal.classList.remove('hidden');
+            // Reset form
+            this.taskForm.reset();
+        }
+    }
+
+    hideModal() {
+        if (this.taskModal) {
+            this.taskModal.classList.add('hidden');
+        }
+    }
+
     initializeEventListeners() {
-        // Remove any existing event listeners
-        const newAddTaskBtn = document.getElementById('addTaskBtn');
-        const oldAddTaskBtn = newAddTaskBtn.cloneNode(true);
-        newAddTaskBtn.parentNode.replaceChild(oldAddTaskBtn, newAddTaskBtn);
-        oldAddTaskBtn.addEventListener('click', () => this.showModal());
+        // Add task button
+        this.addTaskBtn?.addEventListener('click', () => this.showModal());
 
         // Close modal
-        const closeModal = document.getElementById('close-modal');
-        const newCloseModal = closeModal.cloneNode(true);
-        closeModal.parentNode.replaceChild(newCloseModal, closeModal);
-        newCloseModal.addEventListener('click', () => this.hideModal());
+        this.closeModalBtn?.addEventListener('click', () => this.hideModal());
 
         // Form submission
-        const taskForm = document.getElementById('task-form');
-        const newTaskForm = taskForm.cloneNode(true);
-        taskForm.parentNode.replaceChild(newTaskForm, taskForm);
-        newTaskForm.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.taskForm?.addEventListener('submit', (e) => this.handleSubmit(e));
 
         // Search and filters
-        const searchInput = document.getElementById('searchInput');
-        const newSearchInput = searchInput.cloneNode(true);
-        searchInput.parentNode.replaceChild(newSearchInput, searchInput);
-        newSearchInput.addEventListener('input', debounce(() => this.loadTasks(), 300));
+        this.searchInput?.addEventListener('input', debounce(() => this.loadTasks(), 300));
+        this.priorityFilter?.addEventListener('change', () => this.loadTasks());
+        this.statusFilter?.addEventListener('change', () => this.loadTasks());
+        this.clearSearchBtn?.addEventListener('click', () => {
+            if (this.searchInput) {
+                this.searchInput.value = '';
+                this.loadTasks();
+            }
+        });
 
-        const priorityFilter = document.getElementById('priorityFilter');
-        const newPriorityFilter = priorityFilter.cloneNode(true);
-        priorityFilter.parentNode.replaceChild(newPriorityFilter, priorityFilter);
-        newPriorityFilter.addEventListener('change', () => this.loadTasks());
-
-        const statusFilter = document.getElementById('statusFilter');
-        const newStatusFilter = statusFilter.cloneNode(true);
-        statusFilter.parentNode.replaceChild(newStatusFilter, statusFilter);
-        newStatusFilter.addEventListener('change', () => this.loadTasks());
-
-        const clearSearch = document.getElementById('clearSearch');
-        const newClearSearch = clearSearch.cloneNode(true);
-        clearSearch.parentNode.replaceChild(newClearSearch, clearSearch);
-        newClearSearch.addEventListener('click', () => {
-            newSearchInput.value = '';
+        // Reset filters
+        this.resetFilters?.addEventListener('click', () => {
+            if (this.searchInput) this.searchInput.value = '';
+            if (this.priorityFilter) this.priorityFilter.value = '';
+            if (this.statusFilter) this.statusFilter.value = '';
             this.loadTasks();
         });
 
-        // Initialize filter event listeners
-        const resetFilters = document.getElementById('resetFilters');
-        const newResetFilters = resetFilters.cloneNode(true);
-        resetFilters.parentNode.replaceChild(newResetFilters, resetFilters);
-        newResetFilters.addEventListener('click', () => {
-            console.log('Resetting filters');
-            if (searchInput) searchInput.value = '';
-            if (priorityFilter) priorityFilter.value = '';
-            if (statusFilter) statusFilter.value = '';
-            this.loadTasks();
+        // Close modal on outside click
+        this.taskModal?.addEventListener('click', (e) => {
+            if (e.target === this.taskModal) {
+                this.hideModal();
+            }
         });
-
-        // Task Modal Cancel Button
-        const cancelTaskBtn = document.getElementById('cancel-task');
-        if (cancelTaskBtn) {
-            cancelTaskBtn.addEventListener('click', () => this.hideModal());
-        }
-
-        // Close Task Modal Button
-        const closeTaskModal = document.getElementById('close-task-modal');
-        if (closeTaskModal) {
-            closeTaskModal.addEventListener('click', () => this.hideModal());
-        }
-
-        // Logout Button
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => this.showLogoutConfirmation());
-        }
-
-        // Confirm Logout Button
-        const confirmLogoutBtn = document.getElementById('confirm-logout');
-        if (confirmLogoutBtn) {
-            confirmLogoutBtn.addEventListener('click', () => this.handleLogout());
-        }
-
-        // Cancel Logout Button
-        const cancelLogoutBtn = document.getElementById('cancel-logout');
-        if (cancelLogoutBtn) {
-            cancelLogoutBtn.addEventListener('click', () => this.hideLogoutConfirmation());
-        }
     }
 
-    // Show modal for adding/editing task
-    showModal(task = null) {
-        this.currentTask = task;
-        const modalTitle = document.getElementById('modal-title');
-        const form = document.getElementById('task-form');
-        
-        if (task) {
-            console.log('Editing task:', task); // Debug log
-            modalTitle.textContent = 'Edit Task';
-            document.getElementById('task-title').value = task.title || '';
-            document.getElementById('task-description').value = task.description || '';
-            document.getElementById('task-deadline').value = task.deadline ? task.deadline.split('T')[0] : '';
-            document.getElementById('task-priority').value = task.priority || 'medium';
-            document.getElementById('task-status').value = task.status || 'pending';
-        } else {
-            console.log('Creating new task'); // Debug log
-            modalTitle.textContent = 'Add Task';
-            form.reset();
-        }
-
-        document.getElementById('task-modal').classList.remove('hidden');
-    }
-
-    // Hide modal
-    hideModal() {
-        this.taskModal.classList.add('hidden');
-        this.currentTask = null;
-        this.taskForm.reset();
-    }
-
-    // Handle form submission
-    async handleSubmit(e) {
-        e.preventDefault();
-        try {
-            const taskData = {
-                title: document.getElementById('task-title').value,
-                description: document.getElementById('task-description').value,
-                deadline: document.getElementById('task-deadline').value,
-                priority: document.getElementById('task-priority').value,
-                status: document.getElementById('task-status').value
-            };
-
-            console.log('Submitting task:', taskData); // Debug log
-            console.log('Current task:', this.currentTask); // Debug log
-
-            let url = `${this.API_URL}/tasks`;
-            let method = 'POST';
-
-            if (this.currentTask && this.currentTask._id) {
-                url = `${this.API_URL}/tasks/${this.currentTask._id}`;
-                method = 'PATCH';
-                console.log('Edit URL:', url); // Debug log
-            }
-
-            const response = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.auth.getToken()}`
-                },
-                body: JSON.stringify(taskData)
-            });
-
-            // First check if response is ok before trying to parse JSON
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Server error response:', errorText);
-                throw new Error(`Failed to save task: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Server response:', data); // Debug log
-
-            // Reset current task
-            this.currentTask = null;
-            
-            // Hide modal and show success message
-            this.hideModal();
-            this.showNotification(
-                method === 'PATCH' ? 'Task updated successfully!' : 'Task created successfully!',
-                'success'
-            );
-            
-            // Clear form
-            document.getElementById('task-form').reset();
-            
-            // Reload tasks
-            await this.loadTasks();
-        } catch (error) {
-            console.error('Error saving task:', error);
-            this.showNotification(error.message || 'Failed to save task. Please try again.', 'error');
-        }
-    }
-
-    // Create new task
-    async createTask(taskData) {
-        try {
-            const token = this.auth?.getToken();
-            if (!token) {
-                throw new Error('Authentication required');
-            }
-
-            const response = await fetch(`${this.API_URL}/tasks`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(taskData)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to create task');
-            }
-
-            return data;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    // Update existing task
-    async updateTask(taskId, taskData) {
-        try {
-            const token = this.auth?.getToken();
-            if (!token) {
-                throw new Error('Authentication required');
-            }
-
-            const response = await fetch(`${this.API_URL}/tasks/${taskId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(taskData)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to update task');
-            }
-
-            return data;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    // Delete task
-    async deleteTask(taskId) {
-        if (!confirm('Are you sure you want to delete this task?')) {
-            return;
-        }
-
-        try {
-            const token = this.auth?.getToken();
-            if (!token) {
-                throw new Error('Authentication required');
-            }
-
-            const response = await fetch(`${this.API_URL}/tasks/${taskId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || 'Failed to delete task');
-            }
-
-            this.loadTasks();
-        } catch (error) {
-            alert(error.message);
-        }
-    }
-
-    // Load tasks with filters
     async loadTasks() {
         try {
-            // Get filter values
-            const searchQuery = document.getElementById('searchInput')?.value || '';
-            const priorityFilter = document.getElementById('priorityFilter')?.value || '';
-            const statusFilter = document.getElementById('statusFilter')?.value || '';
-
-            // Build query string
-            const queryParams = new URLSearchParams();
-            if (searchQuery) queryParams.append('search', searchQuery);
-            if (priorityFilter) queryParams.append('priority', priorityFilter);
-            if (statusFilter) queryParams.append('status', statusFilter);
-
-            console.log('Loading tasks with filters:', {
-                search: searchQuery,
-                priority: priorityFilter,
-                status: statusFilter
-            });
-
-            const url = `${this.API_URL}/tasks${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
-            console.log('Fetching tasks from:', url);
-
-            const response = await fetch(url, {
+            const response = await fetch(`${this.API_URL}/tasks`, {
                 headers: {
                     'Authorization': `Bearer ${this.auth.getToken()}`
                 }
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to load tasks');
-            }
+            if (!response.ok) throw new Error('Failed to load tasks');
 
             const tasks = await response.json();
-            console.log('Loaded tasks:', tasks);
+            
+            if (!tasks || tasks.length === 0) {
+                this.tasksList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-tasks fa-3x"></i>
+                        <h3>No Tasks Yet!</h3>
+                        <p>Click the "Add Task" button to start managing your tasks.</p>
+                        <button class="btn btn-primary" onclick="window.taskManager.showModal()">
+                            <i class="fas fa-plus"></i> Add Your First Task
+                        </button>
+                    </div>
+                `;
+                return;
+            }
 
             this.renderTasks(tasks);
         } catch (error) {
@@ -345,22 +119,11 @@ class TaskManager {
         }
     }
 
-    // Render tasks to DOM
     renderTasks(tasks) {
         if (!this.tasksList) return;
 
         this.tasksList.innerHTML = '';
         
-        if (tasks.length === 0) {
-            this.tasksList.innerHTML = `
-                <div class="no-tasks">
-                    <i class="fas fa-tasks"></i>
-                    <p>No tasks found</p>
-                </div>
-            `;
-            return;
-        }
-
         tasks.forEach(task => {
             const taskElement = document.createElement('div');
             taskElement.className = 'task-card';
@@ -412,6 +175,76 @@ class TaskManager {
 
             this.tasksList.appendChild(taskElement);
         });
+    }
+
+    async handleSubmit(e) {
+        e.preventDefault();
+        try {
+            const taskData = {
+                title: document.getElementById('task-title').value,
+                description: document.getElementById('task-description').value,
+                deadline: document.getElementById('task-deadline').value,
+                priority: document.getElementById('task-priority').value,
+                status: document.getElementById('task-status').value
+            };
+
+            let url = `${this.API_URL}/tasks`;
+            let method = 'POST';
+
+            const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.auth.getToken()}`
+                },
+                body: JSON.stringify(taskData)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Server error response:', errorText);
+                throw new Error(`Failed to save task: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Server response:', data);
+
+            this.hideModal();
+            this.showNotification('Task created successfully!', 'success');
+            this.loadTasks();
+        } catch (error) {
+            console.error('Error saving task:', error);
+            this.showNotification(error.message || 'Failed to save task. Please try again.', 'error');
+        }
+    }
+
+    async deleteTask(taskId) {
+        if (!confirm('Are you sure you want to delete this task?')) {
+            return;
+        }
+
+        try {
+            const token = this.auth?.getToken();
+            if (!token) {
+                throw new Error('Authentication required');
+            }
+
+            const response = await fetch(`${this.API_URL}/tasks/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Failed to delete task');
+            }
+
+            this.loadTasks();
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     showNotification(message, type) {
@@ -484,7 +317,6 @@ if (!window.taskManagerInitialized) {
         if (token && user) {
             document.getElementById('username').textContent = `Hi, ${user.username}`;
             const taskManager = new TaskManager();
-            taskManager.loadTasks();
         } else {
             window.location.href = 'auth.html';
         }
