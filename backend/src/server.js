@@ -42,10 +42,9 @@ const corsOptions = {
   maxAge: 86400
 };
 
-// Middleware
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '10kb' })); // Limit body size
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Security headers
 app.use((req, res, next) => {
@@ -61,15 +60,9 @@ if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
 }
 
-// Health Check Route
-app.get('/health', (req, res) => {
-  const status = {
-    server: '🟢 Operational',
-    database: mongoose.connection.readyState === 1 ? '🟢 Connected' : '🔴 Disconnected',
-    timestamp: new Date(),
-    uptime: `${Math.floor(process.uptime())} seconds`
-  };
-  res.json(status);
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
 // Welcome route
@@ -88,11 +81,16 @@ app.use('/api/tasks', taskRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('❌ Error:', err.stack);
+  console.error(err.stack);
   res.status(500).json({ 
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : '🔧 Internal Server Error'
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error',
+    status: 500 
   });
+});
+
+// Handle 404
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not Found', status: 404 });
 });
 
 // Database connection with retry mechanism
@@ -142,14 +140,19 @@ process.on('SIGINT', async () => {
 // Initialize database connection
 connectDB();
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`
+// Export for Vercel
+module.exports = app;
+
+// Start server if not running on Vercel
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`
 🚀 Server Status: Online
 🌍 Environment: ${process.env.NODE_ENV}
 🔗 URL: http://localhost:${PORT}
 📝 API Documentation: http://localhost:${PORT}/api-docs
 ❤️  Health Check: http://localhost:${PORT}/health
-  `);
-});
+    `);
+  });
+}
