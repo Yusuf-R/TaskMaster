@@ -240,6 +240,7 @@ class Auth {
     showLogoutConfirmation() {
         if (this.logoutModal) {
             this.logoutModal.classList.remove('hidden');
+            this.logoutModal.style.display = 'flex';
             requestAnimationFrame(() => {
                 this.logoutModal.style.opacity = '1';
             });
@@ -251,13 +252,20 @@ class Auth {
             this.logoutModal.style.opacity = '0';
             setTimeout(() => {
                 this.logoutModal.classList.add('hidden');
+                this.logoutModal.style.display = 'none';
             }, 300);
         }
     }
 
     performLogout() {
+        // Hide modal first
+        this.hideLogoutConfirmation();
+        
+        // Clear auth data
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        this.token = null;
+        this.user = null;
         
         // Show success message
         this.showNotification('Successfully logged out!', 'success');
