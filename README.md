@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![TaskMaster Logo](src/assets/task.ico)
+![TaskMaster Logo](/frontend/src/assets/task.ico)
 
 [![Node.js](https://img.shields.io/badge/Node.js-v14+-green.svg)](https://nodejs.org)
 [![MongoDB](https://img.shields.io/badge/MongoDB-4.4+-green.svg)](https://www.mongodb.com)
@@ -160,6 +160,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-Made with ❤️ by [Your Name] | [Portfolio](your-portfolio-link)
+Yusuf Abdulwasiu | [Portfolio](https://task-master-fe.vercel.app)
 
 </div>
