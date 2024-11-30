@@ -5,7 +5,7 @@ class TaskManager {
             return window.taskManager;
         }
 
-        this.API_URL = 'http://localhost:5000/api';
+        this.API_URL = process.env.BACKEND_URL;
         this.auth = window.auth;
         
         // Initialize DOM elements

@@ -1,6 +1,6 @@
 class Auth {
     constructor() {
-        this.API_URL = 'http://localhost:5000/api';
+        this.API_URL = process.env.BACKEND_URL;
         this.token = localStorage.getItem('token');
         this.user = JSON.parse(localStorage.getItem('user') || 'null');
 
