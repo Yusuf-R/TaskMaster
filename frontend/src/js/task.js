@@ -1,5 +1,3 @@
-import config from './config.js';
-
 class TaskManager {
     constructor() {
         // Prevent multiple instances
@@ -38,6 +36,7 @@ class TaskManager {
     showModal() {
         if (this.taskModal) {
             this.taskModal.classList.remove('hidden');
+            this.taskModal.style.display = 'flex';  // Ensure modal is displayed
             // Reset form
             this.taskForm.reset();
         }
@@ -46,6 +45,7 @@ class TaskManager {
     hideModal() {
         if (this.taskModal) {
             this.taskModal.classList.add('hidden');
+            this.taskModal.style.display = 'none';  // Ensure modal is hidden
         }
     }
 
@@ -98,14 +98,14 @@ class TaskManager {
 
             const tasks = await response.json();
             
-            if (!tasks || tasks.length === 0) {
+            if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
                 this.tasksList.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-tasks fa-3x"></i>
-                        <h3>No Tasks Yet!</h3>
-                        <p>Click the "Add Task" button to start managing your tasks.</p>
-                        <button class="btn btn-primary" onclick="window.taskManager.showModal()">
-                            <i class="fas fa-plus"></i> Add Your First Task
+                        <i class="fas fa-clipboard-list fa-4x"></i>
+                        <h3>No Tasks Found</h3>
+                        <p>Your task list is empty. Start by adding your first task!</p>
+                        <button class="btn btn-primary add-first-task" onclick="window.taskManager.showModal()">
+                            <i class="fas fa-plus"></i> Create Your First Task
                         </button>
                     </div>
                 `;
