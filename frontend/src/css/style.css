@@ -1678,3 +1678,271 @@ button:disabled .fa-spinner {
     padding: 10px 20px;
     font-size: 1.1rem;
 }
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    .container {
+        max-width: 960px;
+    }
+
+    .task-card {
+        flex: 0 0 calc(33.333% - 20px);
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .container {
+        max-width: 720px;
+    }
+
+    .task-card {
+        flex: 0 0 calc(50% - 20px);
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .task-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .search-filter {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        max-width: 540px;
+        padding: 0 15px;
+    }
+
+    .app-header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .user-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .task-card {
+        flex: 0 0 100%;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .task-meta {
+        flex-wrap: wrap;
+    }
+
+    .task-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .task-actions button {
+        width: 100%;
+    }
+
+    /* Auth Pages Responsive */
+    .auth-container {
+        padding: 20px;
+    }
+
+    .auth-box {
+        width: 95%;
+        max-width: none;
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .auth-header {
+        margin-bottom: 20px;
+    }
+
+    .auth-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .auth-form {
+        gap: 15px;
+    }
+
+    .auth-footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .app-header {
+        padding: 10px;
+    }
+
+    .logo h1 {
+        font-size: 1.25rem;
+    }
+
+    .modal-content {
+        padding: 10px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+
+    .task-tag {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+    }
+
+    .task-title {
+        font-size: 1.1rem;
+    }
+
+    /* Landing Page Responsive */
+    .hero-section {
+        padding: 40px 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .feature-card {
+        padding: 15px;
+    }
+
+    /* Logout Modal Responsive */
+    .logout-modal-content {
+        width: 90%;
+        padding: 15px !important;
+    }
+
+    .logout-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .logout-actions button {
+        width: 100%;
+    }
+
+    .logout-body h2 {
+        font-size: 1.25rem;
+    }
+
+    .logout-body p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) {
+    .task-card:hover {
+        transform: none;
+        box-shadow: var(--shadow);
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+
+    .task-actions button:hover {
+        transform: none;
+    }
+}
+
+/* Dark Mode Optimization */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #1a1a1a;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0a0;
+        --border-color: #2d2d2d;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .task-card,
+    .modal-content,
+    .auth-box {
+        background: #242424;
+    }
+
+    .filter-select,
+    .search-box input,
+    .form-control {
+        background: #1a1a1a;
+        color: var(--text-primary);
+    }
+
+    .app-header {
+        background: #242424;
+    }
+}
+
+/* Print Optimization */
+@media print {
+    .task-actions,
+    .task-controls,
+    .app-header button,
+    .modal {
+        display: none !important;
+    }
+
+    .task-card {
+        break-inside: avoid;
+        border: 1px solid #ddd;
+    }
+
+    .app-container {
+        padding: 0;
+    }
+}
