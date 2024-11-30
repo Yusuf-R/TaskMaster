@@ -50,7 +50,12 @@
                         </div>
                         <small class="error-message" id="login-password-error"></small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="submit" class="auth-button" id="login-btn">
+                        <span class="button-text">Login</span>
+                        <span class="button-loader hidden">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
                     <p class="form-switch">Don't have an account? <a href="#" id="show-register">Register</a></p>
                 </form>
 
@@ -101,7 +106,12 @@
                         </div>
                         <small class="error-message" id="register-password-confirm-error"></small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="submit" class="auth-button" id="register-btn">
+                        <span class="button-text">Register</span>
+                        <span class="button-loader hidden">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </span>
+                    </button>
                     <p class="form-switch">Already have an account? <a href="#" id="show-login">Login</a></p>
                 </form>
             </div>

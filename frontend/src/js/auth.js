@@ -94,14 +94,16 @@ class Auth {
         }
     }
 
-    async handleLogin(e) {
-        e.preventDefault();
+    async handleLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        // Show loading state
+        const loginBtn = document.getElementById('login-btn');
+        this.setLoadingState(loginBtn, true);
+
         try {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            console.log('Attempting login with:', { email }); // Log for debugging
-
             const response = await fetch(`${this.API_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
@@ -112,56 +114,108 @@ class Auth {
             });
 
             const data = await response.json();
-            console.log('Login response:', data); // Log for debugging
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
+            if (response.ok) {
+                // Store token and user data
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Show success notification
+                this.showNotification('Successfully logged in!', 'success');
+                
+                // Redirect after notification
+                setTimeout(() => {
+                    window.location.href = './taskManager.html';
+                }, 1500);
+            } else {
+                this.showNotification(data.message || 'Login failed', 'error');
             }
-
-            this.setAuth(data);
-            window.location.href = 'taskManager.html';
         } catch (error) {
             console.error('Login error:', error);
-            alert(error.message || 'Failed to login. Please check your credentials.');
+            this.showNotification('Network error. Please try again.', 'error');
+        } finally {
+            this.setLoadingState(loginBtn, false);
         }
     }
 
-    async handleRegister(e) {
-        e.preventDefault();
+    async handleRegister(event) {
+        event.preventDefault();
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const confirmPassword = document.getElementById('register-password-confirm').value;
+
+        if (password !== confirmPassword) {
+            this.showNotification('Passwords do not match', 'error');
+            return;
+        }
+
+        // Show loading state
+        const registerBtn = document.getElementById('register-btn');
+        this.setLoadingState(registerBtn, true);
+
         try {
-            const username = document.getElementById('register-username').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const confirmPassword = document.getElementById('register-password-confirm').value;
-
-            console.log('Attempting registration with:', { email, username }); // Log for debugging
-
-            if (password !== confirmPassword) {
-                throw new Error('Passwords do not match');
-            }
-
             const response = await fetch(`${this.API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ username, email, password })
+                body: JSON.stringify({ email, password })
             });
 
             const data = await response.json();
-            console.log('Register response:', data); // Log for debugging
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Registration failed');
+            if (response.ok) {
+                // Store token and user data
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Show success notification
+                this.showNotification('Registration successful!', 'success');
+                
+                // Redirect after notification
+                setTimeout(() => {
+                    window.location.href = './taskManager.html';
+                }, 1500);
+            } else {
+                this.showNotification(data.message || 'Registration failed', 'error');
             }
-
-            this.setAuth(data);
-            window.location.href = 'taskManager.html';
         } catch (error) {
             console.error('Registration error:', error);
-            alert(error.message || 'Failed to register. Please try again.');
+            this.showNotification('Network error. Please try again.', 'error');
+        } finally {
+            this.setLoadingState(registerBtn, false);
         }
+    }
+
+    setLoadingState(button, isLoading) {
+        if (isLoading) {
+            button.classList.add('loading');
+            button.disabled = true;
+        } else {
+            button.classList.remove('loading');
+            button.disabled = false;
+        }
+    }
+
+    showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        
+        // Add icon based on type
+        const icon = type === 'success' ? 'check-circle' : 'exclamation-circle';
+        notification.innerHTML = `
+            <i class="fas fa-${icon}"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+
+        // Remove notification after animation
+        setTimeout(() => {
+            notification.classList.add('hiding');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
     }
 
     checkAuth() {

@@ -393,10 +393,10 @@ class TaskManager {
                 </div>
                 <div class="task-actions">
                     <button class="btn btn-icon edit-btn">
-                        <i class="fas fa-edit"></i> Edit Task
+                        <i class="fas fa-edit"></i> Edit
                     </button>
                     <button class="btn btn-icon delete-btn">
-                        <i class="fas fa-trash"></i> Delete Task
+                        <i class="fas fa-trash"></i> Delete
                     </button>
                 </div>
             `;
