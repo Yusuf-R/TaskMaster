@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -13,10 +15,51 @@ dotenv.config();
 // Create Express app
 const app = express();
 
+// Security middleware
+app.use(helmet()); // Adds various HTTP headers for security
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000, // default 15 minutes
+  max: process.env.RATE_LIMIT_MAX || 100, // default 100 requests per windowMs
+  message: {
+    status: 429,
+    message: '❌ Too many requests, please try again later.'
+  }
+});
+
+// Apply rate limiting to all routes
+app.use(limiter);
+
+// CORS Configuration
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? process.env.FRONTEND_URL.split(',') // Support multiple origins
+    : ['http://localhost:5500', 'http://127.0.0.1:5500'],
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  maxAge: 86400
+};
+
 // Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10kb' })); // Limit body size
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
+
+// Trust proxy - needed for secure cookies in production
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 
 // Health Check Route
 app.get('/health', (req, res) => {

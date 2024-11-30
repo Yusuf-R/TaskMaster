@@ -144,22 +144,18 @@
     </div>
 
     <!-- Scripts -->
-    <script src="src/js/auth.js"></script>
-    <script src="src/js/task.js"></script>
-    <script>
-        // Initialize Auth
-        window.auth = new Auth();
-        
-        // Initialize TaskManager after DOM content is loaded
+    <script src="src/js/auth.js" type="module"></script>
+    <script src="src/js/task.js" type="module"></script>
+    <script type="module">
+        // Initialize task manager after modules are loaded
         document.addEventListener('DOMContentLoaded', () => {
-            window.taskManager = new TaskManager();
-            
             // Check authentication
             const token = localStorage.getItem('token');
             const user = JSON.parse(localStorage.getItem('user'));
             
             if (token && user) {
                 document.getElementById('username').textContent = `Hi, ${user.username}`;
+                window.taskManager = new TaskManager();
                 window.taskManager.loadTasks();
             } else {
                 window.location.href = 'auth.html';
