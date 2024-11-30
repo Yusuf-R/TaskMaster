@@ -1,3 +1,5 @@
+import config from './config.js';
+
 class TaskManager {
     constructor() {
         // Prevent multiple instances
@@ -5,7 +7,7 @@ class TaskManager {
             return window.taskManager;
         }
 
-        this.API_URL = process.env.BACKEND_URL;
+        this.API_URL = 'https://task-master-server-be.vercel.app/api';
         this.auth = window.auth;
         
         // Initialize DOM elements

@@ -1,6 +1,6 @@
 class Auth {
     constructor() {
-        this.API_URL = process.env.BACKEND_URL;
+        this.API_URL = 'https://task-master-server-be.vercel.app/api';
         this.token = localStorage.getItem('token');
         this.user = JSON.parse(localStorage.getItem('user') || 'null');
 
