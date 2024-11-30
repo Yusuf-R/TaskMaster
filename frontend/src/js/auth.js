@@ -140,6 +140,7 @@ class Auth {
 
     async handleRegister(event) {
         event.preventDefault();
+        const username = document.getElementById('register-username').value;
         const email = document.getElementById('register-email').value;
         const password = document.getElementById('register-password').value;
         const confirmPassword = document.getElementById('register-password-confirm').value;
@@ -160,7 +161,7 @@ class Auth {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ username, email, password })
             });
 
             const data = await response.json();
