@@ -49,113 +49,20 @@
                         <p>Never miss a deadline with our reminder system</p>
                     </div>
                     <div class="feature-card">
-                        <i class="fas fa-filter"></i>
-                        <h3>Smart Filtering</h3>
-                        <p>Find tasks quickly with powerful search and filters</p>
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Progress Tracking</h3>
+                        <p>Monitor your productivity and task completion</p>
                     </div>
-                    <div class="feature-card">
-                        <i class="fas fa-mobile-alt"></i>
-                        <h3>Mobile Friendly</h3>
-                        <p>Access your tasks anywhere, anytime</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main App -->
-        <div id="app" class="hidden">
-            <!-- Header -->
-            <header class="app-header">
-                <h1>TaskMaster</h1>
-                <div class="user-info">
-                    <span id="username"></span>
-                    <button id="logout-btn" class="btn btn-outline">Logout</button>
-                </div>
-            </header>
-
-            <!-- Main Content -->
-            <main class="main-content">
-                <!-- Task Controls -->
-                <div class="task-controls">
-                    <button id="add-task-btn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Task
-                    </button>
-                    <div class="search-filter">
-                        <input type="text" id="search-input" placeholder="Search tasks...">
-                        <select id="priority-filter">
-                            <option value="">All Priorities</option>
-                            <option value="high">High</option>
-                            <option value="medium">Medium</option>
-                            <option value="low">Low</option>
-                        </select>
-                        <select id="status-filter">
-                            <option value="">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Tasks List -->
-                <div class="tasks-container">
-                    <div id="tasks-list" class="tasks-list">
-                        <!-- Tasks will be dynamically added here -->
-                    </div>
-                </div>
-            </main>
-
-            <!-- Add/Edit Task Modal -->
-            <div id="task-modal" class="modal hidden">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 id="modal-title">Add New Task</h3>
-                        <button id="close-modal" class="close-btn">&times;</button>
-                    </div>
-                    <form id="task-form">
-                        <div class="form-group">
-                            <label for="task-title">Title</label>
-                            <input type="text" id="task-title" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="task-description">Description</label>
-                            <textarea id="task-description" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="task-deadline">Deadline</label>
-                            <input type="datetime-local" id="task-deadline" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="task-priority">Priority</label>
-                            <select id="task-priority" required>
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="task-status">Status</label>
-                            <select id="task-status" required>
-                                <option value="pending">Pending</option>
-                                <option value="in-progress">In Progress</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Task</button>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="src/js/auth.js"></script>
-    <script src="src/js/task.js"></script>
-    <script>
-        // Initialize auth and task manager
-        document.addEventListener('DOMContentLoaded', () => {
-            window.auth = new Auth();
-            window.taskManager = new TaskManager();
+    <script type="module">
+        // Only initialize what's needed for the landing page
+        document.getElementById('learn-more').addEventListener('click', () => {
+            document.querySelector('.features-section').scrollIntoView({ behavior: 'smooth' });
         });
     </script>
 </body>

@@ -222,17 +222,15 @@ class Auth {
         const token = this.getToken();
         const currentPath = window.location.pathname;
         
-        // Allow free access to landing page (index.html)
-        if (currentPath.endsWith('index.html') || currentPath.endsWith('/')) {
+        // Protected routes need auth
+        if (currentPath.includes('taskManager.html')) {
+            if (!token) {
+                window.location.href = 'auth.html';
+            }
             return;
         }
-
-        // Only redirect if trying to access protected pages without auth
-        if (!token && currentPath.includes('taskManager.html')) {
-            window.location.href = 'auth.html';
-        }
         
-        // Redirect to tasks if trying to access auth page while logged in
+        // Redirect from auth page if already logged in
         if (token && currentPath.includes('auth.html')) {
             window.location.href = 'taskManager.html';
         }
@@ -259,7 +257,14 @@ class Auth {
     performLogout() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = 'auth.html';
+        
+        // Show success message
+        this.showNotification('Successfully logged out!', 'success');
+        
+        // Redirect to landing page after logout
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
     }
 
     setAuth(data) {
