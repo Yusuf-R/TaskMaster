@@ -1456,6 +1456,36 @@ select#task-status option[value="completed"] {
     animation: fadeIn 0.3s ease-in-out;
 }
 
+/* Loading States */
+.fa-spinner {
+    margin-right: 8px;
+}
+
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+button:disabled .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Filter Styles */
+.filter-select {
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
 /* Auth Button Loading State */
 .auth-button {
     position: relative;

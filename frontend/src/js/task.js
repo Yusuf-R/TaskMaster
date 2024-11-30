@@ -7,6 +7,7 @@ class TaskManager {
 
         this.API_URL = 'https://task-master-server-be.vercel.app/api';
         this.auth = window.auth;
+        this.currentTaskId = null; // Add this to track editing state
         
         // Initialize DOM elements
         this.tasksList = document.querySelector('#tasks-list');
@@ -33,12 +34,32 @@ class TaskManager {
         window.taskManager = this;
     }
 
-    showModal() {
+    showModal(task = null) {
         if (this.taskModal) {
             this.taskModal.classList.remove('hidden');
             this.taskModal.style.display = 'flex';  // Ensure modal is displayed
-            // Reset form
-            this.taskForm.reset();
+            
+            // Update modal title and form based on whether we're editing
+            const modalTitleSpan = this.modalTitle.querySelector('span');
+            const modalTitleIcon = this.modalTitle.querySelector('i');
+            
+            if (task) {
+                modalTitleSpan.textContent = 'Edit Task';
+                modalTitleIcon.className = 'fas fa-edit';
+                this.currentTaskId = task._id;
+                
+                // Fill form with task data
+                document.getElementById('task-title').value = task.title;
+                document.getElementById('task-description').value = task.description;
+                document.getElementById('task-deadline').value = task.deadline.split('.')[0]; // Remove milliseconds
+                document.getElementById('task-priority').value = task.priority;
+                document.getElementById('task-status').value = task.status;
+            } else {
+                modalTitleSpan.textContent = 'Add New Task';
+                modalTitleIcon.className = 'fas fa-plus-circle';
+                this.currentTaskId = null;
+                this.taskForm.reset();
+            }
         }
     }
 
@@ -46,6 +67,7 @@ class TaskManager {
         if (this.taskModal) {
             this.taskModal.classList.add('hidden');
             this.taskModal.style.display = 'none';  // Ensure modal is hidden
+            this.currentTaskId = null;
         }
     }
 
@@ -88,6 +110,10 @@ class TaskManager {
 
     async loadTasks() {
         try {
+            const searchQuery = this.searchInput?.value.toLowerCase() || '';
+            const priorityFilter = this.priorityFilter?.value || '';
+            const statusFilter = this.statusFilter?.value || '';
+
             const response = await fetch(`${this.API_URL}/tasks`, {
                 headers: {
                     'Authorization': `Bearer ${this.auth.getToken()}`
@@ -96,8 +122,18 @@ class TaskManager {
 
             if (!response.ok) throw new Error('Failed to load tasks');
 
-            const tasks = await response.json();
+            let tasks = await response.json();
             
+            // Apply filters
+            tasks = tasks.filter(task => {
+                const matchesSearch = task.title.toLowerCase().includes(searchQuery) ||
+                                    task.description.toLowerCase().includes(searchQuery);
+                const matchesPriority = !priorityFilter || task.priority === priorityFilter;
+                const matchesStatus = !statusFilter || task.status === statusFilter;
+                
+                return matchesSearch && matchesPriority && matchesStatus;
+            });
+
             if (!tasks || !Array.isArray(tasks) || tasks.length === 0) {
                 this.tasksList.innerHTML = `
                     <div class="empty-state">
@@ -179,7 +215,14 @@ class TaskManager {
 
     async handleSubmit(e) {
         e.preventDefault();
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        
         try {
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            
             const taskData = {
                 title: document.getElementById('task-title').value,
                 description: document.getElementById('task-description').value,
@@ -190,6 +233,12 @@ class TaskManager {
 
             let url = `${this.API_URL}/tasks`;
             let method = 'POST';
+
+            // If editing, use PUT method and include task ID
+            if (this.currentTaskId) {
+                url += `/${this.currentTaskId}`;
+                method = 'PUT';
+            }
 
             const response = await fetch(url, {
                 method,
@@ -203,18 +252,22 @@ class TaskManager {
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Server error response:', errorText);
-                throw new Error(`Failed to save task: ${response.status} ${response.statusText}`);
+                throw new Error(`Failed to ${this.currentTaskId ? 'update' : 'create'} task: ${response.status} ${response.statusText}`);
             }
 
             const data = await response.json();
             console.log('Server response:', data);
 
             this.hideModal();
-            this.showNotification('Task created successfully!', 'success');
+            this.showNotification(`Task ${this.currentTaskId ? 'updated' : 'created'} successfully!`, 'success');
             this.loadTasks();
         } catch (error) {
             console.error('Error saving task:', error);
             this.showNotification(error.message || 'Failed to save task. Please try again.', 'error');
+        } finally {
+            // Restore button state
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
         }
     }
 
