@@ -1401,6 +1401,88 @@ select#task-status option[value="completed"] {
     }
 }
 
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.skeleton {
+    background: #f6f7f8;
+    background-image: linear-gradient(
+        to right,
+        #f6f7f8 0%,
+        #edeef1 20%,
+        #f6f7f8 40%,
+        #f6f7f8 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 2000px 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+.task-card.skeleton {
+    border: none;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.skeleton-header {
+    margin-bottom: 15px;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 60%;
+    background: #eee;
+    border-radius: 4px;
+}
+
+.skeleton-description {
+    height: 60px;
+    margin: 15px 0;
+    background: #eee;
+    border-radius: 4px;
+}
+
+.skeleton-meta {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.skeleton-tag {
+    height: 24px;
+    width: 80px;
+    background: #eee;
+    border-radius: 12px;
+}
+
+.skeleton-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.skeleton-button {
+    height: 32px;
+    width: 80px;
+    background: #eee;
+    border-radius: 4px;
+}
+
+/* Make skeleton items semi-transparent */
+.skeleton .skeleton-title,
+.skeleton .skeleton-description,
+.skeleton .skeleton-tag,
+.skeleton .skeleton-button {
+    opacity: 0.7;
+}
+
 /* Utilities */
 .hidden {
     display: none !important;

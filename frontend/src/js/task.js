@@ -7,7 +7,8 @@ class TaskManager {
 
         this.API_URL = 'https://task-master-server-be.vercel.app/api';
         this.auth = window.auth;
-        this.currentTaskId = null; // Add this to track editing state
+        this.currentTaskId = null;
+        this.isLoading = false;
         
         // Initialize DOM elements
         this.tasksList = document.querySelector('#tasks-list');
@@ -108,8 +109,37 @@ class TaskManager {
         });
     }
 
+    showLoadingSkeleton() {
+        if (!this.tasksList) return;
+        
+        const skeletons = Array(3).fill(0).map(() => `
+            <div class="task-card skeleton">
+                <div class="skeleton-header">
+                    <div class="skeleton-title"></div>
+                </div>
+                <div class="skeleton-description"></div>
+                <div class="skeleton-meta">
+                    <div class="skeleton-tag"></div>
+                    <div class="skeleton-tag"></div>
+                    <div class="skeleton-tag"></div>
+                </div>
+                <div class="skeleton-actions">
+                    <div class="skeleton-button"></div>
+                    <div class="skeleton-button"></div>
+                </div>
+            </div>
+        `).join('');
+
+        this.tasksList.innerHTML = skeletons;
+    }
+
     async loadTasks() {
+        if (this.isLoading) return;
+        
         try {
+            this.isLoading = true;
+            this.showLoadingSkeleton();
+
             const searchQuery = this.searchInput?.value.toLowerCase() || '';
             const priorityFilter = this.priorityFilter?.value || '';
             const statusFilter = this.statusFilter?.value || '';
@@ -152,6 +182,8 @@ class TaskManager {
         } catch (error) {
             console.error('Error loading tasks:', error);
             this.showNotification('Failed to load tasks. Please try again.', 'error');
+        } finally {
+            this.isLoading = false;
         }
     }
 
@@ -234,10 +266,10 @@ class TaskManager {
             let url = `${this.API_URL}/tasks`;
             let method = 'POST';
 
-            // If editing, use PUT method and include task ID
+            // If editing, use PATCH method and include task ID
             if (this.currentTaskId) {
                 url += `/${this.currentTaskId}`;
-                method = 'PUT';
+                method = 'PATCH';
             }
 
             const response = await fetch(url, {
